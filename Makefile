@@ -24,7 +24,7 @@ setup:
 	fi
 
 build: setup
-	docker compose build
+	docker compose pull
 
 run: setup
 	WORK_DIR=$(WORK_DIR_ABS) docker compose run --rm opencode
