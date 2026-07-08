@@ -1,0 +1,27 @@
+services:
+  opencode:
+    image: ghcr.io/anomalyco/opencode:latest
+
+    working_dir: /workspace
+
+    stdin_open: true
+    tty: true
+
+    env_file:
+      - .env
+
+    environment:
+      # Provider API keys — sourced from .env via docker compose interpolation
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - XAI_API_KEY=${XAI_API_KEY:-}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY:-}
+
+    volumes:
+      - ${WORK_DIR:-./workspace}:/workspace
+      - ./config:/root/.config/opencode
