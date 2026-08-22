@@ -1,8 +1,11 @@
 services:
   opencode:
     # Local image = upstream opencode + git (see Dockerfile).
+    # pull_policy: build => never try to pull from a registry, always
+    # build locally (avoids "pull access denied" noise for local images).
     build: .
     image: local/opencode:latest
+    pull_policy: build
 
     working_dir: /workspace
 
