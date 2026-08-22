@@ -19,7 +19,7 @@ cp .env.example .env
 # Edit .env and set at least one provider key, e.g.:
 #   ANTHROPIC_API_KEY=sk-ant-...
 
-# 3. Pull the image
+# 3. Build the image (upstream opencode + git)
 make build
 
 # 4. Run OpenCode
@@ -36,7 +36,8 @@ make run WORK_DIR=/path/to/your/project
 
 | Command       | Description                                              |
 | ------------- | -------------------------------------------------------- |
-| `make build`  | Pull the latest OpenCode Docker image                    |
+| `make build`  | Build the local image (upstream OpenCode + git)  |
+| `make pull`   | Pull the upstream image without git (for reference) |
 | `make run`    | Start an interactive OpenCode session                    |
 | `make shell`  | Open a bash shell inside the container (for debugging)   |
 | `make clean`  | Tear down orphaned containers                            |
@@ -88,9 +89,11 @@ The default workspace directory is `./workspace` (auto-created on first run). To
 
 ```
 .
-├── .env.example          # Template for API keys
-├── .gitignore            # Ignores .env and workspace/
-├── Makefile              # Convenience targets
+├── .dockerignore       # Keeps the build context small
+├── .env.example        # Template for API keys
+├── .gitignore          # Ignores .env and workspace/
+├── Dockerfile          # Upstream opencode + git
+├── Makefile            # Convenience targets
 ├── README.md
 ├── config/
 │   └── opencode.json     # OpenCode agent configuration
@@ -98,9 +101,22 @@ The default workspace directory is `./workspace` (auto-created on first run). To
 └── workspace/            # Default mounted workspace (gitignored)
 ```
 
+## Git support
+
+The upstream OpenCode image is Alpine-based and does **not** include `git`.
+This repo builds a local image (see `Dockerfile`) that adds git, a default
+`user.name`/`user.email` identity, and a global `safe.directory *` so
+bind-mounted repos owned by the host user work without "dubious ownership"
+errors. Override the identity per-repo with:
+
+```bash
+git config user.name "Your Name"
+git config user.email "you@example.com"
+```
+
 ## Troubleshooting
 
-**"No services to build" on `make build`** — This is normal with pre-built images. Ensure you're using the latest Makefile which calls `docker compose pull`.
+**"No services to build" on `make build`** — Ensure you're using the current Makefile which calls `docker compose build` (not `pull`). Use `make pull` only if you want the bare upstream image.
 
 **Configuration is invalid** — Make sure `config/opencode.json` uses string format for the model field (`"provider/model"`), not an object.
 

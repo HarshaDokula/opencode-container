@@ -24,6 +24,10 @@ setup:
 	fi
 
 build: setup
+	docker compose build
+
+# Pull the upstream image without git (for reference/debugging)
+pull: setup
 	docker compose pull
 
 run: setup

@@ -1,6 +1,8 @@
 services:
   opencode:
-    image: ghcr.io/anomalyco/opencode:latest
+    # Local image = upstream opencode + git (see Dockerfile).
+    build: .
+    image: local/opencode:latest
 
     working_dir: /workspace
 
