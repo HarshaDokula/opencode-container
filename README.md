@@ -19,7 +19,7 @@ cp .env.example .env
 # Edit .env and set at least one provider key, e.g.:
 #   ANTHROPIC_API_KEY=sk-ant-...
 
-# 3. Build the image (upstream opencode + git)
+# 3. Build the image: pulls latest upstream opencode, then adds git
 make build
 
 # 4. Run OpenCode
@@ -36,7 +36,7 @@ make run WORK_DIR=/path/to/your/project
 
 | Command       | Description                                              |
 | ------------- | -------------------------------------------------------- |
-| `make build`  | Build the local image (upstream OpenCode + git)  |
+| `make build`  | Pull latest upstream OpenCode, then build local image (+git) |
 | `make pull`   | Pull the upstream image without git (for reference) |
 | `make run`    | Start an interactive OpenCode session                    |
 | `make shell`  | Open a bash shell inside the container (for debugging)   |

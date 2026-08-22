@@ -24,11 +24,14 @@ setup:
 	fi
 
 build: setup
+	@echo "Pulling latest upstream opencode image..."
+	docker pull ghcr.io/anomalyco/opencode:latest
+	@echo "Building local image (upstream + git)..."
 	docker compose build
 
 # Pull the upstream image without git (for reference/debugging)
 pull: setup
-	docker compose pull
+	docker pull ghcr.io/anomalyco/opencode:latest
 
 run: setup
 	WORK_DIR=$(WORK_DIR_ABS) docker compose run --rm opencode
