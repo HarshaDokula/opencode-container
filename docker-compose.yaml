@@ -30,3 +30,7 @@ services:
     volumes:
       - ${WORK_DIR:-./workspace}:/workspace
       - ./config:/root/.config/opencode
+      # opencode stores `/connect` credentials in its DATA dir
+      # (auth.json under ~/.local/share/opencode), not the config dir.
+      # Persist it here or logins are lost when the container is removed.
+      - ./data:/root/.local/share/opencode

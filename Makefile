@@ -15,7 +15,7 @@ WORK_DIR_ABS := $(shell mkdir -p $(WORK_DIR) && cd $(WORK_DIR) && pwd)
 # ─── Targets ────────────────────────────────────────────────────────
 
 setup:
-	@mkdir -p $(WORK_DIR) config
+	@mkdir -p $(WORK_DIR) config data
 	@touch .env
 	@if [ ! -s .env ]; then \
 		echo "⚠️  .env file is empty. Copy .env.example and fill in your API keys:"; \

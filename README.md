@@ -72,6 +72,18 @@ Set the default model in `config/opencode.json` using `provider/model` format:
 
 The config is mounted into the container at `/root/.config/opencode/opencode.json`. See the [OpenCode docs](https://opencode.ai/docs) for all configuration options.
 
+### Provider Login (`.env` vs `/connect`)
+
+Two ways to authenticate:
+
+- **API keys** — set them in `.env` (see above). Nothing is written to disk.
+- **`/connect` inside the TUI** — opencode saves the credential to its data
+directory (`~/.local/share/opencode/auth.json`). That directory is bind-mounted
+from `./data` so logins survive container restarts.
+
+Do not commit `./data` — it contains credentials (it is gitignored). Delete it
+to revoke stored logins.
+
 ### Working Directory
 
 The default workspace directory is `./workspace` (auto-created on first run). To point it at another directory, either:
@@ -97,6 +109,7 @@ The default workspace directory is `./workspace` (auto-created on first run). To
 ├── README.md
 ├── config/
 │   └── opencode.json     # OpenCode agent configuration
+├── data/               # Persisted opencode state — auth.json from /connect
 ├── docker-compose.yaml   # Container definition
 └── workspace/            # Default mounted workspace (gitignored)
 ```
@@ -119,5 +132,11 @@ git config user.email "you@example.com"
 **"No services to build" on `make build`** — Ensure you're using the current Makefile which calls `docker compose build` (not `pull`). Use `make pull` only if you want the bare upstream image.
 
 **Configuration is invalid** — Make sure `config/opencode.json` uses string format for the model field (`"provider/model"`), not an object.
+
+**`/connect` login is lost on exit** — Logins live in `~/.local/share/opencode`
+inside the container. This repo bind-mounts that path from `./data`; make sure the
+mount exists in `docker-compose.yaml` and re-run `make run` (the `setup` target
+creates `./data` automatically). If you upgraded from an older version of this
+repo, existing credentials must be re-entered once.
 
 **Permission errors on workspace files** — Files created inside the container are owned by root. Adjust ownership from the host as needed, or set `HOST_UID`/`HOST_GID` in the Makefile if your setup requires it.
