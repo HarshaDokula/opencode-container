@@ -1,5 +1,3 @@
-name: opencode
-
 services:
   opencode:
     # Local image = upstream opencode + git (see Dockerfile).
