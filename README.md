@@ -32,15 +32,50 @@ By default the container mounts `./workspace` as the working directory. Create p
 make run WORK_DIR=/path/to/your/project
 ```
 
+## Updating OpenCode
+
+Run:
+
+```bash
+make update
+```
+
+This will:
+
+1. Stop and remove any running/leftover containers for this project.
+2. Pull the latest `ghcr.io/anomalyco/opencode:latest` upstream image.
+3. Rebuild the local `local/opencode:latest` image (upstream + git).
+4. Delete only the images this project replaced (the previous
+`local/opencode:latest` and the previous upstream base image).
+
+Everything is scoped to this project: it never runs a global/dangling `docker
+image prune`, never touches build cache, and only removes opencode's own
+containers and images.
+
+Because rebuilding retags `local/opencode:latest` and pulling retags the
+upstream image, the previous versions lose their tags and would otherwise sit
+around as untagged ("dangling") images forever. `make update` deletes those
+exact image IDs so repeated updates don't slowly fill the disk.
+
+To reclaim space manually at any time, run `make prune` (removes this
+project's leftover containers and any dangling opencode images). `make clean`
+also removes the current local image entirely (`make build` recreates it).
+
+> Note: build cache is intentionally left alone because Docker's BuildKit only
+> supports daemon-wide cache pruning, not per-project. It is reused across
+> builds, so it stays bounded.
+
 ## Commands
 
 | Command       | Description                                              |
 | ------------- | -------------------------------------------------------- |
 | `make build`  | Pull latest upstream OpenCode, then build local image (+git) |
+| `make update` | Update OpenCode: stop old containers, pull latest upstream, rebuild, and prune leftovers |
 | `make pull`   | Pull the upstream image without git (for reference) |
 | `make run`    | Start an interactive OpenCode session                    |
 | `make shell`  | Open a bash shell inside the container (for debugging)   |
-| `make clean`  | Tear down orphaned containers                            |
+| `make prune`  | Remove this project's leftover containers and dangling opencode images |
+| `make clean`  | Tear down containers and remove the local image          |
 
 ## Configuration
 

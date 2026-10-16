@@ -6,6 +6,10 @@
 # the .git metadata of a bind-mounted workspace. This image layers git on top.
 FROM ghcr.io/anomalyco/opencode:latest
 
+# Marks images built by this project so `make prune` can reclaim only
+# opencode's own leftover images (see Makefile).
+LABEL org.opencode.local="true"
+
 USER root
 RUN apk add --no-cache git \
     && git --version
